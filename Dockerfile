@@ -1,51 +1,65 @@
-FROM debian:jessie
-MAINTAINER Jan Broer <janeczku@yahoo.de>
+FROM debian:buster
+
+# Maintainer
+LABEL maintainer "Alexander Graf <alex@otherguy.io>"
+
+# Build arguments
+ARG VCS_REF=master
+
+# http://label-schema.org/rc1/
+LABEL org.label-schema.schema-version "1.0"
+LABEL org.label-schema.name           "Dropbox"
+LABEL org.label-schema.build-date     "${BUILD_DATE}"
+LABEL org.label-schema.description    "Standalone Dropbox client on Linux"
+LABEL org.label-schema.vcs-url        "https://github.com/otherguy/docker-dropbox"
+LABEL org.label-schema.vcs-ref        "${VCS_REF}"
+
+# Required to prevent warnings
 ENV DEBIAN_FRONTEND noninteractive
 
-# Following 'How do I add or remove Dropbox from my Linux repository?' - https://www.dropbox.com/en/help/246
-RUN echo 'deb http://linux.dropbox.com/debian jessie main' > /etc/apt/sources.list.d/dropbox.list \
-	&& apt-key adv --keyserver pgp.mit.edu --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E \
-	&& apt-get -qqy update \
-	# Note 'ca-certificates' dependency is required for 'dropbox start -i' to succeed
-	&& apt-get -qqy install ca-certificates curl python-gpgme dropbox \
-	# Perform image clean up.
-	&& apt-get -qqy autoclean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-	# Create service account and set permissions.
-	&& groupadd dropbox \
-	&& useradd -m -d /dbox -c "Dropbox Daemon Account" -s /usr/sbin/nologin -g dropbox dropbox
+# Install prerequisites
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu
 
-# Dropbox is weird: it insists on downloading its binaries itself via 'dropbox
-# start -i'. So we switch to 'dropbox' user temporarily and let it do its thing.
-USER dropbox
-RUN mkdir -p /dbox/.dropbox /dbox/.dropbox-dist /dbox/Dropbox /dbox/base \
-	&& echo y | dropbox start -i
+# Create user and group
+RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
+ && useradd --home-dir /opt/dropbox --comment "Dropbox Daemon Account" --user-group --shell /usr/sbin/nologin dropbox \
+ && chown -R dropbox:dropbox /opt/dropbox
 
-# Switch back to root, since the run script needs root privs to chmod to the user's preferrred UID
-USER root
+# Change working directory
+WORKDIR /opt/dropbox/Dropbox
+
+# Not really required for --net=host
+EXPOSE 17500
+
+# https://help.dropbox.com/installs-integrations/desktop/linux-repository
+RUN add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
+ && apt-key adv --keyserver keyserver.ubuntu.com  --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends libatomic1 python3-gpg dropbox \
+ && rm -rf /var/lib/apt/lists/*
+
+# Dropbox insists on downloading its binaries itself via 'dropbox start -i'
+RUN echo "y" | gosu dropbox dropbox start -i
 
 # Dropbox has the nasty tendency to update itself without asking. In the processs it fills the
-# file system over time with rather large files written to /dbox and /tmp. The auto-update routine
-# also tries to restart the dockerd process (PID 1) which causes the container to be terminated.
-RUN mkdir -p /opt/dropbox \
-	# Prevent dropbox to overwrite its binary
-	&& mv /dbox/.dropbox-dist/dropbox-lnx* /opt/dropbox/ \
-	&& mv /dbox/.dropbox-dist/dropboxd /opt/dropbox/ \
-	&& mv /dbox/.dropbox-dist/VERSION /opt/dropbox/ \
-	&& rm -rf /dbox/.dropbox-dist \
-	&& install -dm0 /dbox/.dropbox-dist \
-	# Prevent dropbox to write update files
-	&& chmod u-w /dbox \
-	&& chmod o-w /tmp \
-	&& chmod g-w /tmp \
-	# Prepare for command line wrapper
-	&& mv /usr/bin/dropbox /usr/bin/dropbox-cli
+# file system over time with rather large files written to /opt/dropbox/ and /tmp.
+#
+# https://bbs.archlinux.org/viewtopic.php?id=191001
+RUN mkdir -p /opt/dropbox/bin/ \
+ && mv /opt/dropbox/.dropbox-dist/* /opt/dropbox/bin/ \
+ && rm -rf /opt/dropbox/.dropbox-dist \
+ && install -dm0 /opt/dropbox/.dropbox-dist \
+ && chmod u-w /opt/dropbox/.dropbox-dist \
+ && chmod o-w /tmp \
+ && chmod g-w /tmp
+
+# Create volumes
+VOLUME ["/opt/dropbox/.dropbox", "/opt/dropbox/Dropbox"]
 
 # Install init script and dropbox command line wrapper
-COPY run /root/
-COPY dropbox /usr/bin/dropbox
+COPY docker-entrypoint.sh /
 
-WORKDIR /dbox/Dropbox
-EXPOSE 17500
-VOLUME ["/dbox/.dropbox", "/dbox/Dropbox"]
-ENTRYPOINT ["/root/run"]
+# Set entrypoint and command
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/opt/dropbox/bin/dropboxd"]
