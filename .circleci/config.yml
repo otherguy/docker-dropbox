@@ -13,12 +13,12 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build --build-arg BUILD_DATE=$(date --rfc-3339=seconds | sed 's/ /T/') --build-arg VCS_REF=$(echo $CIRCLE_SHA1 | cut -c -7) --tag $IMAGE_NAME:$IMAGE_TAG .
+            docker build --build-arg BUILD_DATE=$(date --rfc-3339=seconds | sed 's/ /T/') --build-arg VCS_REF=$(echo $CIRCLE_SHA1 | cut -c -7) --tag "${IMAGE_NAME}:${IMAGE_TAG}" .
       - run:
           name: Publish latest to Docker Hub
           command: |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME:latest
+            echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+            docker push "${IMAGE_NAME}:${IMAGE_TAG}"
       - run:
           name: Publish tag to Docker Hub
           command: |
