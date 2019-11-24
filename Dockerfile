@@ -5,6 +5,7 @@ LABEL maintainer "Alexander Graf <alex@otherguy.io>"
 
 # Build arguments
 ARG VCS_REF=master
+ARG BUILD_DATE=""
 
 # http://label-schema.org/rc1/
 LABEL org.label-schema.schema-version "1.0"

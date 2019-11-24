@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     environment:
-      IMAGE_NAME: otherguy/docker
+      IMAGE_NAME: otherguy/docker-dropbox
       IMAGE_TAG: latest
     docker:
       - image: circleci/buildpack-deps:buster
@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build --build-arg BUILD_DATE=$(date --rfc-3339=seconds | sed 's/ /T/') --build-arg VCS_REF=$(echo $CIRCLE_SHA1 | cut -c -7) --tag "${IMAGE_NAME}:${IMAGE_TAG}" .
+            docker build --build-arg BUILD_DATE="$(date --rfc-3339=seconds | sed 's/ /T/')" --build-arg VCS_REF="$(echo $CIRCLE_SHA1 | cut -c -7)" --tag "${IMAGE_NAME}:${IMAGE_TAG}" .
       - run:
           name: Publish latest to Docker Hub
           command: |
