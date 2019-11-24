@@ -1,9 +1,11 @@
 # Dropbox in Docker
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/janeczku/dropbox.svg?maxAge=2592000)][hub]
-[![License](https://img.shields.io/github/license/janeczku/docker-alpine-kubernetes.svg?maxAge=2592000)]()
+[![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/docker-dropbox?style=flat-square)][dockerhub] [![CircleCI](https://img.shields.io/circleci/build/github/otherguy/docker-dropbox/master?style=flat-square)][circleci] [![MicroBadger Size (tag)](https://img.shields.io/microbadger/image-size/otherguy/docker-dropbox/latest?style=flat-square)][microbadger] [![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange&style=flat-square)][license]
 
-[hub]: https://hub.docker.com/r/janeczku/dropbox/
+[dockerhub]: https://hub.docker.com/r/otherguy/docker-dropbox/
+[license]: https://tldrlegal.com/license/mit-license
+[circleci]: https://app.circleci.com/github/otherguy/docker-dropbox/pipelines
+[microbadger]: https://microbadger.com/images/otherguy/docker-dropbox
 
 Run Dropbox inside Docker. Fully working with local host folder mount or inter-container linking (via `--volumes-from`).
 
