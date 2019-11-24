@@ -1,25 +1,28 @@
 # Dropbox in Docker
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/docker-dropbox?style=flat-square)][dockerhub] [![CircleCI](https://img.shields.io/circleci/build/github/otherguy/docker-dropbox/master?style=flat-square)][circleci] [![MicroBadger Size (tag)](https://img.shields.io/microbadger/image-size/otherguy/docker-dropbox/latest?style=flat-square)][microbadger] [![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange&style=flat-square)][license]
+[![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/dropbox?style=flat-square)][dockerhub]
+[![CircleCI](https://img.shields.io/circleci/build/github/otherguy/docker-dropbox/master?style=flat-square)][circleci]
+[![MicroBadger Size (tag)](https://img.shields.io/microbadger/image-size/otherguy/dropbox/latest?style=flat-square)][microbadger]
+[![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange&style=flat-square)][license]
 
-[dockerhub]: https://hub.docker.com/r/otherguy/docker-dropbox/
+[dockerhub]: https://hub.docker.com/r/otherguy/dropbox/
 [license]: https://tldrlegal.com/license/mit-license
 [circleci]: https://app.circleci.com/github/otherguy/docker-dropbox/pipelines
-[microbadger]: https://microbadger.com/images/otherguy/docker-dropbox
+[microbadger]: https://microbadger.com/images/otherguy/dropbox
 
 Run Dropbox inside Docker. Fully working with local host folder mount or inter-container linking (via `--volumes-from`).
 
-This repository provides the [janeczku/dropbox](https://registry.hub.docker.com/u/janeczku/dropbox/) image.
+This repository provides the [otherguy/dropbox](https://registry.hub.docker.com/u/otherguy/dropbox/) image.
 
 ## Usage examples
 
 ### Quickstart
 
-    docker run -d --restart=always --name=dropbox janeczku/dropbox
+    $ docker run -d --restart=always --name=dropbox janeczku/dropbox
 
 ### Dropbox data mounted to local folder on the host
 
-    docker run -d --restart=always --name=dropbox \
+    $ docker run -d --restart=always --name=dropbox \
     -v /path/to/localfolder:/dbox/Dropbox \
     janeczku/dropbox
 

@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     environment:
-      IMAGE_NAME: otherguy/docker-dropbox
+      IMAGE_NAME: otherguy/dropbox
       IMAGE_TAG: latest
     docker:
       - image: circleci/buildpack-deps:buster
