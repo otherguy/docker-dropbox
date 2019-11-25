@@ -4,6 +4,7 @@ jobs:
   build:
     environment:
       IMAGE_NAME: otherguy/dropbox
+      GITHUB_PACKAGE: docker.pkg.github.com/otherguy/docker-dropbox/dropbox
       IMAGE_TAG: latest
     docker:
       - image: circleci/buildpack-deps:buster
@@ -23,8 +24,8 @@ jobs:
           name: Publish latest to GitHub
           command: |
             echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin
-            docker tag ${IMAGE_NAME}:${IMAGE_TAG} docker.pkg.github.com/${IMAGE_NAME}:${IMAGE_TAG}
-            docker push docker.pkg.github.com/${IMAGE_NAME}:${IMAGE_TAG}
+            docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${GITHUB_PACKAGE}:${IMAGE_TAG}
+            docker push ${GITHUB_PACKAGE}:${IMAGE_TAG}
       - run:
           name: Publish tag to Docker Hub
           command: |
@@ -38,8 +39,8 @@ jobs:
           command: |
             if [ -n "${CIRCLE_TAG}" ]
             then
-              docker tag ${IMAGE_NAME}:${IMAGE_TAG} docker.pkg.github.com/${IMAGE_NAME}:${CIRCLE_TAG}
-              docker push docker.pkg.github.com/${IMAGE_NAME}:${CIRCLE_TAG}
+              docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${GITHUB_PACKAGE}:${CIRCLE_TAG}
+              docker push ${GITHUB_PACKAGE}:${CIRCLE_TAG}
             fi
 
 workflows:
