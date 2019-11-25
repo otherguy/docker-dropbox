@@ -2,7 +2,7 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/dropbox?style=flat-square)][dockerhub]
 [![CircleCI](https://img.shields.io/circleci/build/github/otherguy/docker-dropbox/master?style=flat-square)][circleci]
-[![MicroBadger Size (tag)](https://img.shields.io/microbadger/image-size/otherguy/dropbox/latest?style=flat-square)][microbadger]
+[![MicroBadger Layers](https://img.shields.io/microbadger/layers/otherguy/docker-dropbox?style=flat-square)][microbadger]
 [![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange&style=flat-square)][license]
 
 [dockerhub]: https://hub.docker.com/r/otherguy/dropbox/
