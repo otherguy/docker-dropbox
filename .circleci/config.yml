@@ -18,14 +18,28 @@ jobs:
           name: Publish latest to Docker Hub
           command: |
             echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-            docker push "${IMAGE_NAME}:${IMAGE_TAG}"
+            docker push ${IMAGE_NAME}:${IMAGE_TAG}
+      - run:
+          name: Publish latest to GitHub
+          command: |
+            echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin
+            docker tag ${IMAGE_NAME}:${IMAGE_TAG} docker.pkg.github.com/${IMAGE_NAME}:${IMAGE_TAG}
+            docker push docker.pkg.github.com/${IMAGE_NAME}:${IMAGE_TAG}
       - run:
           name: Publish tag to Docker Hub
           command: |
-            if [ -n "$CIRCLE_TAG" ]
+            if [ -n "${CIRCLE_TAG}" ]
             then
-              docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_TAG
-              docker push $IMAGE_NAME:$CIRCLE_TAG
+              docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:${CIRCLE_TAG}
+              docker push ${IMAGE_NAME}:${CIRCLE_TAG}
+            fi
+      - run:
+          name: Publish tag to GitHub
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]
+            then
+              docker tag ${IMAGE_NAME}:${IMAGE_TAG} docker.pkg.github.com/${IMAGE_NAME}:${CIRCLE_TAG}
+              docker push docker.pkg.github.com/${IMAGE_NAME}:${CIRCLE_TAG}
             fi
 
 workflows:
