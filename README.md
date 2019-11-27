@@ -22,6 +22,8 @@ This repository provides the [otherguy/dropbox](https://registry.hub.docker.com/
 
     $ docker run -d --restart=always --name=dropbox otherguy/dropbox
 
+    $ docker run --detach --name=dropbox --restart=always -it -e DROPBOX_UID=$(id -u) -e DROPBOX_GID=$(id -g) -v "/root/.dropbox:/opt/dropbox/.dropbox" -v "/opt/dropbox:/opt/dropbox/Dropbox" otherguy/dropbox:latest
+
 ### Dropbox data mounted to local folder on the host
 
     $ docker run -d --restart=always --name=dropbox \
