@@ -4,29 +4,19 @@ services:
   - docker 
 
 script:
-  - docker build --build-arg BUILD_DATE="$(date --rfc-3339=seconds | sed 's/ /T/')" --build-arg VCS_REF="$(echo $CIRCLE_SHA1 | cut -c -7)" --tag otherguy/dropbox:latest .
+  - docker build --build-arg BUILD_DATE="$(date --rfc-3339=seconds | sed 's/ /T/')" --build-arg VCS_REF="$(echo $TRAVIS_COMMIT | cut -c -7)" --tag otherguy/dropbox:latest .
 
 before_deploy:
   - echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin 
-  
+
 deploy:
   - provider: script
-    script: docker push otherguy/dropbox:latest
+    script: docker push otherguy/dropbox:latest && docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest
     on:
       branch: master
 
   - provider: script
-    script: docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest
-    on:
-      branch: master
-
-  - provider: script
-    script: docker tag otherguy/dropbox:latest otherguy/dropbox:${TRAVIS_TAG} && docker push otherguy/dropbox:${TRAVIS_TAG}
-    on:
-      tags: true
-
-  - provider: script
-    script: docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG} && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG}
+    script: docker tag otherguy/dropbox:latest otherguy/dropbox:${TRAVIS_TAG} && docker push otherguy/dropbox:${TRAVIS_TAG} && docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG} && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG}
     on:
       tags: true
 
