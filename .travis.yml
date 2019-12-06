@@ -8,12 +8,17 @@ script:
 
 deploy:
   - provider: script
-    script: echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && docker push otherguy/dropbox:latest
+    script: echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin 
+    on:
+      repo: otherguy/docker-dropbox
+
+  - provider: script
+    script: docker push otherguy/dropbox:latest
     on:
       branch: master
 
   - provider: script
-    script: echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin && docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest
+    script: docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest
     on:
       branch: master
 

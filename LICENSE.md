@@ -1,8 +1,8 @@
 The MIT License (MIT)
 =====================
 
-Copyright © `2019` `Alexander Graf`
-Copyright © 2015-2016 Jan Broer
+Copyright © `2019-2020` `Alexander Graf`
+Copyright © `2015-2016` `Jan Broer`
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
