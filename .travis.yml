@@ -1,0 +1,48 @@
+os: linux
+
+services:
+  - docker
+
+env:
+  - IMAGE_NAME=otherguy/dropbox
+  - GITHUB_PACKAGE=docker.pkg.github.com/otherguy/docker-dropbox/dropbox
+  - IMAGE_TAG=latest
+
+script:
+  - docker build --build-arg BUILD_DATE="$(date --rfc-3339=seconds | sed 's/ /T/')" --build-arg VCS_REF="$(echo $CIRCLE_SHA1 | cut -c -7)" --tag "${IMAGE_NAME}:${IMAGE_TAG}" .
+  - bundle exec rake test
+
+deploy:
+  - provider: script
+    script: |
+      echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+      docker push ${IMAGE_NAME}:${IMAGE_TAG}
+    on:
+      branch: master
+
+  - provider: script
+    script: |
+      echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin
+      docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${GITHUB_PACKAGE}:${IMAGE_TAG}
+      docker push ${GITHUB_PACKAGE}:${IMAGE_TAG}
+    on:
+      branch: master
+
+  - provider: script
+    script: |
+      docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:${CIRCLE_TAG}
+      docker push ${IMAGE_NAME}:${CIRCLE_TAG}
+    on:
+      tags: true
+
+  - provider: script
+    script: |
+      docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${GITHUB_PACKAGE}:${CIRCLE_TAG}
+      docker push ${GITHUB_PACKAGE}:${CIRCLE_TAG}
+    on:
+      tags: true
+
+
+notifications:
+  slack:
+    secure: vPOzM6Sg5OQKgkzAnKOeSGFwpfslmSynoTJ1UiNa3b4qeZPHqabs+IGe54gtWEepC3YqlcIjZ8pLoKDYJP4xic75RILeeVs1Ya//5/0yiUshE/yKWvHDY7p6ozKo0LAgX9Ean9q5OvMDJXBImoBBmqKyfNOT/IVKMML2d/LwK2MJQuJmOjWQS++f8l4ZTbnoLC59uPP6MvaPf0QktspxTEP5sKjDd/5DDkzkBGueu8jFHzXjkjozrj6rRk1Jiexh9BsNJCFnz3/nurrg1NXCNlFk0BLCcop5VTKjuibSqO+U8x5DAon2nuFz7dVAi7vC8l9fL/pnYhb5x2e2XXt3VtisadG302ysVekFlDCzQ+zD4LudzBQDaOH8OQW+5+noK8qDXV0IAPeKZzT8Nb1/LkJMiNzVQiLHlOYThDGUj9+9qb6MsigzxFUjhTQN5XmarVy7p2xMO5pzNPXIPd2dEJVrabaFWoOL+Qog/Om8GBKmxsToJR8f6oVk8SDK3Q9cPjoZQoujyRiK3acTK+srT+J2nCnPwU0Sy/RRRbvmvIUDwNbJ8jkeYBs0y1aXk8SsMKRqzdrLNq/5YvyjzzMUGzrDdJAkqywwIV0ROLdsqBC+cIPAJoJF7s5b7kTM1EGy01IuLGxJ8EJ3UYOl1KXRzoAafBb6pWEL34Tu0OSMj3Q=

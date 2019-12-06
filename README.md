@@ -31,6 +31,7 @@ This repository provides the [otherguy/dropbox](https://registry.hub.docker.com/
     otherguy/dropbox
 
 ### Run dropbox with custom user/group id
+
 This fixes file permission errrors that might occur when mounting the Dropbox file folder (`/opt/dropbox/Dropbox`) from the host or a Docker container volume. You need to set `DROPBOX_UID`/`DROPBOX_GID` to the user id and group id of whoever owns these files on the host or in the other container.
 
     docker run -d --restart=always --name=dropbox \
