@@ -8,34 +8,24 @@ script:
 
 deploy:
   - provider: script
-    script: |
-      echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-      docker push otherguy/dropbox:latest
+    script: echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && docker push otherguy/dropbox:latest
     on:
       branch: master
 
   - provider: script
-    script: |
-      echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin
-      docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest
-      docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest
+    script: echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin && docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:latest
     on:
       branch: master
 
   - provider: script
-    script: |
-      docker tag otherguy/dropbox:latest otherguy/dropbox:${TRAVIS_TAG}
-      docker push otherguy/dropbox:${TRAVIS_TAG}
+    script: docker tag otherguy/dropbox:latest otherguy/dropbox:${TRAVIS_TAG} && docker push otherguy/dropbox:${TRAVIS_TAG}
     on:
       tags: true
 
   - provider: script
-    script: |
-      docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG}
-      docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG}
+    script: docker tag otherguy/dropbox:latest docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG} && docker push docker.pkg.github.com/otherguy/docker-dropbox/dropbox:${TRAVIS_TAG}
     on:
       tags: true
-
 
 notifications:
   slack:
