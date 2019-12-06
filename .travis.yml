@@ -6,12 +6,10 @@ services:
 script:
   - docker build --build-arg BUILD_DATE="$(date --rfc-3339=seconds | sed 's/ /T/')" --build-arg VCS_REF="$(echo $CIRCLE_SHA1 | cut -c -7)" --tag otherguy/dropbox:latest .
 
+before_deploy:
+  - echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin 
+  
 deploy:
-  - provider: script
-    script: echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin 
-    on:
-      repo: otherguy/docker-dropbox
-
   - provider: script
     script: docker push otherguy/dropbox:latest
     on:
