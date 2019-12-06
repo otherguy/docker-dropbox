@@ -1,14 +1,14 @@
 # Dropbox in Docker
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/dropbox?style=flat-square)][dockerhub]
-[![CircleCI](https://img.shields.io/circleci/build/github/otherguy/docker-dropbox/master?style=flat-square)][circleci]
+[![Travis](https://img.shields.io/travis/com/otherguy/docker-dropbox?style=flat-square)][travis]
 [![MicroBadger Layers](https://img.shields.io/microbadger/layers/otherguy/docker-dropbox?style=flat-square)][microbadger]
 [![GitHub stars](https://img.shields.io/github/stars/otherguy/docker-dropbox?color=violet&style=flat-square)][stargazers]
 [![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange&style=flat-square)][license]
 
 [dockerhub]: https://hub.docker.com/r/otherguy/dropbox/
 [license]: https://tldrlegal.com/license/mit-license
-[circleci]: https://circleci.com/gh/otherguy/docker-dropbox
+[travis]: https://travis-ci.com/otherguy/docker-dropbox
 [microbadger]: https://microbadger.com/images/otherguy/dropbox
 [stargazers]: https://github.com/otherguy/docker-dropbox/stargazers
 
