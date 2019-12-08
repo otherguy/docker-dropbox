@@ -70,7 +70,7 @@ echo ""
 umask 002
 
 echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
-exec gosu dropbox "$@" &                                                                                                                   
-  pid="$!"                                                                                                                 
-  trap "kill -SIGQUIT $pid" INT                                                                                            
+exec gosu dropbox "$@" &
+  pid="$!"
+  trap "kill -SIGQUIT $pid" INT
   wait
