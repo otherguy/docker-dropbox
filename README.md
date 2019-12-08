@@ -1,86 +1,107 @@
-# Dropbox in Docker
+# 🐳 Dropbox Docker Image
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/dropbox?style=flat-square)][dockerhub]
-[![Travis](https://img.shields.io/travis/com/otherguy/docker-dropbox?style=flat-square)][travis]
-[![MicroBadger Layers](https://img.shields.io/microbadger/layers/otherguy/docker-dropbox?style=flat-square)][microbadger]
-[![GitHub stars](https://img.shields.io/github/stars/otherguy/docker-dropbox?color=violet&style=flat-square)][stargazers]
-[![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange&style=flat-square)][license]
+Run Dropbox inside a Docker container. Fully working with local host folder mount or inter-container linking
+(via `--volumes-from`).
+
+This repository provides the [`otherguy/dropbox`](https://registry.hub.docker.com/u/otherguy/dropbox/) image.
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/dropbox)][dockerhub]
+[![Docker Stars](https://img.shields.io/docker/stars/otherguy/dropbox)][dockerhub]
+[![GitHub issues](https://img.shields.io/github/issues/otherguy/docker-dropbox)][issues]
+[![Travis](https://img.shields.io/travis/com/otherguy/docker-dropbox)][travis]
+[![MicroBadger Layers](https://img.shields.io/microbadger/layers/otherguy/docker-dropbox)][microbadger]
+[![GitHub stars](https://img.shields.io/github/stars/otherguy/docker-dropbox?color=violet)][stargazers]
+[![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange)][license]
 
 [dockerhub]: https://hub.docker.com/r/otherguy/dropbox/
 [license]: https://tldrlegal.com/license/mit-license
 [travis]: https://travis-ci.com/otherguy/docker-dropbox
 [microbadger]: https://microbadger.com/images/otherguy/dropbox
 [stargazers]: https://github.com/otherguy/docker-dropbox/stargazers
+[issues]: https://github.com/otherguy/docker-dropbox/issues
 
-Run Dropbox inside Docker. Fully working with local host folder mount or inter-container linking (via `--volumes-from`).
-
-This repository provides the [otherguy/dropbox](https://registry.hub.docker.com/u/otherguy/dropbox/) image.
-
-## Usage examples
+## Usage 🚀
 
 ### Quickstart
 
-    $ docker run -d --restart=always --name=dropbox otherguy/dropbox
+This starts the Dropbox container with default settings:
 
-    $ docker run --detach --name=dropbox --restart=always -it -e DROPBOX_UID=$(id -u) -e DROPBOX_GID=$(id -g) -v "/root/.dropbox:/opt/dropbox/.dropbox" -v "/opt/dropbox:/opt/dropbox/Dropbox" otherguy/dropbox:latest
+    $ docker run --detach --restart=always --name=dropbox otherguy/dropbox
 
-### Dropbox data mounted to local folder on the host
+### Persistent Dropbox Folder
 
-    $ docker run -d --restart=always --name=dropbox \
-    -v /path/to/localfolder:/opt/dropbox/Dropbox \
-    otherguy/dropbox
+It is recommended that you run dropbox with a custom user/group id when mounting the Dropbox file folder
+to the local filesystem. This fixes file permission errrors that might occur when mounting from the host
+or another Docker container volume.
 
-### Run dropbox with custom user/group id
+You need to set the `DROPBOX_UID` and `DROPBOX_GID` environment variables to the user id and group id of w
+hoever owns these files on the host or in the other container. The example below uses `id -u` and `id -g`
+to retrieve the current user's user id and group id, respectively.
 
-This fixes file permission errrors that might occur when mounting the Dropbox file folder (`/opt/dropbox/Dropbox`) from the host or a Docker container volume. You need to set `DROPBOX_UID`/`DROPBOX_GID` to the user id and group id of whoever owns these files on the host or in the other container.
-
-    docker run -d --restart=always --name=dropbox \
-    -e DROPBOX_UID=110 \
-    -e DROPBOX_GID=200 \
-    otherguy/dropbox
+    $ docker run --detach --name=dropbox --restart=always \
+    -e DROPBOX_UID=$(id -u) -e DROPBOX_GID=$(id -g) \
+    -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
+    -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
+    otherguy/dropbox:latest
 
 ### Enable LAN Sync
 
-    docker run -d --restart=always --name=dropbox \
+Using `--net="host"` allows Dropbox to utilize
+[local LAN sync](https://help.dropbox.com/installs-integrations/sync-uploads/lan-sync-overview).
+
+    $ docker run --detach --name=dropbox --restart=always \
     --net="host" \
     otherguy/dropbox
 
-## Linking to Dropbox account after first start
+### Linking Dropbox Account
 
-Check the logs of the container to get URL to authenticate with your Dropbox account.
+To link Dropbox to your account, check the logs of the Docker container to retrieve the Dropbox authentication
+URL:
 
-    docker logs dropbox
+    $ docker logs --follow dropbox
 
-Copy and paste the URL in a browser and login to your Dropbox account to associate.
+Copy and paste the URL in a browser and login to your Dropbox account to associate the Docker container. You
+should see something like this:
 
-    docker logs dropbox
+    This computer is now linked to Dropbox. Welcome [your name]"
 
-You should see something like this:
+### Manage Dropbox Settings
 
-> "This computer is now linked to Dropbox. Welcome xxxx"
+To manage dropbox exclusions or get a sharing link, you need to execute the `dropbox` command inside the
+Docker dropbox container:
 
-## Manage exclusions and check sync status
+    $ docker exec -it dropbox gosu dropbox dropbox [dropbox command]
 
-    docker exec -t -i dropbox dropbox help
+For example, to get an overview of the commands possible, use `help`:
 
-## ENV variables
+    $ docker exec -it dropbox gosu dropbox dropbox help
 
-**DROPBOX_UID**  
-Default: `1000`  
-Run Dropbox with a custom user id (matching the owner of the mounted files)
+## Configuration
 
-**DROPBOX_GID**  
-Default: `1000`  
-Run Dropbox with a custom group id (matching the group of the mounted files)
+### Environment Variables
 
-**$DROPBOX_SKIP_UPDATE**  
-Default: `False`  
-Set this to `True` to skip updating to the latest Dropbox version on container start
+- `DROPBOX_UID`
+If set, runs Dropbox with a custom user id. This must matching the user id of the owner of the mounted
+files. Defaults to `1000`.
 
-## Exposed volumes
+- `DROPBOX_GID`
+If set, runs Dropbox with a custom user id. This must matching the group id of the owner of the mounted
+files. Defaults to `1000`.
 
-//opt/dropbox/Dropbox`
-Dropbox files
+### Exposed Volumes
 
-`/opt/dropbox/.dropbox`
-Dropbox account configuration
+- `/opt/dropbox/Dropbox`
+The actual Dropbox folder, containing all your synced files.
+
+- `/opt/dropbox/.dropbox`
+Account and other settings for Dropbox. If you don't mount this folder, your account needs to be linked
+every time you restart the container.
+
+## Inspiration 💅
+
+Originally forked from [`janeczku/dropbox`](https://hub.docker.com/r/janeczku/dropbox/). Thank you
+[@janeczku](https://github.com/janeczku) for your work!
+
+## Contributing 🚧
+
+Bug reports and pull requests are welcome on GitHub at [`otherguy/docker-dropbox`](https://github.com/otherguy/docker-dropbox).
