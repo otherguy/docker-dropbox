@@ -88,6 +88,10 @@ files. Defaults to `1000`.
 If set, runs Dropbox with a custom user id. This must matching the group id of the owner of the mounted
 files. Defaults to `1000`.
 
+- `DROPBOX_SKIP_UPDATE`
+If set to `true`, skips updating the Dropbox app on container startup. _Note:_ This is not very reliable
+because the dropbox daemon will try to update itself even if this is set to `true`.
+
 ### Exposed Volumes
 
 - `/opt/dropbox/Dropbox`

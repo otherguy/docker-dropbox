@@ -34,8 +34,8 @@ chmod 755 /opt/dropbox/Dropbox
 [ ! -e "/opt/dropbox/.dropbox/unlink.db" ]      || rm /opt/dropbox/.dropbox/unlink.db
 [ ! -e "/opt/dropbox/.dropbox/dropbox.pid" ]    || rm /opt/dropbox/.dropbox/dropbox.pid
 
-# Update Dropbox to latest version unless DBOX_SKIP_UPDATE is set
-if [[ -z "$DBOX_SKIP_UPDATE" ]]; then
+# Update Dropbox to latest version unless DROPBOX_SKIP_UPDATE is set
+if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   echo "Checking for latest Dropbox version..."
   sleep 1
 
@@ -60,6 +60,8 @@ if [[ -z "$DBOX_SKIP_UPDATE" ]]; then
 	rm -rf /opt/dropbox/bin/*
 	mv $tmpdir/.dropbox-dist/* /opt/dropbox/bin/
 	rm -rf $tmpdir
+  find /opt/dropbox -type f -name "*.so" -exec chmod a+rx {} \;
+
 	echo "Dropbox updated to v$Latest"
   else
     echo "Dropbox is up-to-date"
