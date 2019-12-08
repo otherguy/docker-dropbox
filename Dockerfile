@@ -20,12 +20,21 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install prerequisites
 RUN apt-get update \
- && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu
+ && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu locales locales-all
 
 # Create user and group
 RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
  && useradd --home-dir /opt/dropbox --comment "Dropbox Daemon Account" --user-group --shell /usr/sbin/nologin dropbox \
  && chown -R dropbox:dropbox /opt/dropbox
+
+# Set language
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+# Generate locales
+RUN sed --in-place '/en_US.UTF-8/s/^# //' /etc/locale.gen \
+ && locale-gen
 
 # Change working directory
 WORKDIR /opt/dropbox/Dropbox
