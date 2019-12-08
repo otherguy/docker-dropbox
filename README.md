@@ -1,10 +1,5 @@
 # 🐳 Dropbox Docker Image
 
-Run Dropbox inside a Docker container. Fully working with local host folder mount or inter-container linking
-(via `--volumes-from`).
-
-This repository provides the [`otherguy/dropbox`](https://registry.hub.docker.com/u/otherguy/dropbox/) image.
-
 [![Docker Pulls](https://img.shields.io/docker/pulls/otherguy/dropbox)][dockerhub]
 [![Docker Stars](https://img.shields.io/docker/stars/otherguy/dropbox)][dockerhub]
 [![GitHub issues](https://img.shields.io/github/issues/otherguy/docker-dropbox)][issues]
@@ -19,6 +14,9 @@ This repository provides the [`otherguy/dropbox`](https://registry.hub.docker.co
 [microbadger]: https://microbadger.com/images/otherguy/dropbox
 [stargazers]: https://github.com/otherguy/docker-dropbox/stargazers
 [issues]: https://github.com/otherguy/docker-dropbox/issues
+
+Run Dropbox inside a Docker container. Fully working with local host folder mount or inter-container linking
+(via `--volumes-from`). This repository provides the [`otherguy/dropbox`][dockerhub] image.
 
 ## Usage 🚀
 
@@ -39,10 +37,10 @@ hoever owns these files on the host or in the other container. The example below
 to retrieve the current user's user id and group id, respectively.
 
     $ docker run --detach --name=dropbox --restart=always \
-    -e DROPBOX_UID=$(id -u) -e DROPBOX_GID=$(id -g) \
-    -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
-    -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
-    otherguy/dropbox:latest
+      -e DROPBOX_UID=$(id -u) -e DROPBOX_GID=$(id -g) \
+      -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
+      -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
+      otherguy/dropbox:latest
 
 ### Enable LAN Sync
 
@@ -50,8 +48,8 @@ Using `--net="host"` allows Dropbox to utilize
 [local LAN sync](https://help.dropbox.com/installs-integrations/sync-uploads/lan-sync-overview).
 
     $ docker run --detach --name=dropbox --restart=always \
-    --net="host" \
-    otherguy/dropbox
+      --net="host" \
+      otherguy/dropbox
 
 ### Linking Dropbox Account
 
