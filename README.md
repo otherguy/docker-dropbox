@@ -63,6 +63,8 @@ should see something like this:
 
     This computer is now linked to Dropbox. Welcome [your name]"
 
+![Dropbox Account Linking](dropbox.gif)
+
 ### Manage Dropbox Settings
 
 To manage dropbox exclusions or get a sharing link, you need to execute the `dropbox` command inside the
