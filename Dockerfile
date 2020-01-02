@@ -20,7 +20,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install prerequisites
 RUN apt-get update \
- && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu locales locales-all unzip build-essential \
+ && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu locales locales-all unzip build-essential tzdata \
  && apt-get autoclean -y && apt-get autoremove -y \
  && rm -rf /var/lib/apt/lists/*
 
