@@ -60,7 +60,8 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
 	rm -rf /opt/dropbox/bin/*
 	mv $tmpdir/.dropbox-dist/* /opt/dropbox/bin/
 	rm -rf $tmpdir
-  find /opt/dropbox -type f -name "*.so" -exec chmod a+rx {} \;
+  find /opt/dropbox/bin -type f -name "*.so" -exec chmod a+rx {} \;
+  find /opt/dropbox/bin -type f -name "*.so" -exec chown dropbox {} \;
 
 	echo "Dropbox updated to v$Latest"
   else
