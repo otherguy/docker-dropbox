@@ -1,26 +1,28 @@
-FROM debian:buster
+FROM ubuntu:bionic 
 
 # Maintainer
-LABEL maintainer "Alexander Graf <alex@otherguy.io>"
+LABEL maintainer="Tony Pan <tcp1975@gmail.com>"
 
 # Build arguments
 ARG VCS_REF=master
 ARG BUILD_DATE=""
 
 # http://label-schema.org/rc1/
-LABEL org.label-schema.schema-version "1.0"
-LABEL org.label-schema.name           "Dropbox"
-LABEL org.label-schema.build-date     "${BUILD_DATE}"
-LABEL org.label-schema.description    "Standalone Dropbox client on Linux"
-LABEL org.label-schema.vcs-url        "https://github.com/otherguy/docker-dropbox"
-LABEL org.label-schema.vcs-ref        "${VCS_REF}"
+LABEL org.label-schema.schema-version="1.0"
+LABEL org.label-schema.name="Dropbox"
+LABEL org.label-schema.build-date="${BUILD_DATE}"
+LABEL org.label-schema.description="Standalone Dropbox client on Linux"
+LABEL org.label-schema.vcs-url="https://github.com/tcpan/docker-dropbox"
+LABEL org.label-schema.vcs-ref="${VCS_REF}"
 
 # Required to prevent warnings
-ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Install prerequisites
 RUN apt-get update \
- && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu locales locales-all unzip build-essential
+ && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu locales locales-all unzip build-essential \
+ && apt-get autoclean -y && apt-get autoremove -y \
+ && rm -rf /var/lib/apt/lists/*
 
 # Create user and group
 RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
@@ -44,9 +46,10 @@ EXPOSE 17500
 
 # https://help.dropbox.com/installs-integrations/desktop/linux-repository
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FC918B335044912E \
- && add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
+ && add-apt-repository 'deb http://linux.dropbox.com/ubuntu bionic main' \
  && apt-get update \
  && apt-get install -y --no-install-recommends libatomic1 python3-gpg dropbox \
+ && apt-get autoclean -y && apt-get autoremove -y \
  && rm -rf /var/lib/apt/lists/*
 
 RUN curl --location https://github.com/dark/dropbox-filesystem-fix/archive/master.zip > /tmp/dropbox-filesystem-fix.zip \
