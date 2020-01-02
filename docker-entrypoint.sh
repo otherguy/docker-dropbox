@@ -12,6 +12,12 @@ if [ -z "${DROPBOX_GID}" ]; then
   echo "DROPBOX_GID not specified, defaulting to dropbox user group id (${DROPBOX_GID})"
 fi
 
+# Set Max Workers for fsnotify
+if [ -n "${MAX_USER_WATCHES}" ]; then
+  echo fs.inotify.max_user_watches=${MAX_USER_WATCHES} | tee -a /etc/sysctl.conf; sysctl -p
+  echo "Setting fs.inotify.max_user_watches to ${MAX_USER_WATCHES}"
+fi
+
 # Look for existing group, if not found create dropbox with specified GID.
 if [ -z "$(grep ":${DROPBOX_GID}:" /etc/group)" ]; then
   usermod -g users dropbox
@@ -53,17 +59,16 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   echo "Latest   :" $Latest
   echo "Installed:" $Current
   if [ ! -z "${Latest}" ] && [ ! -z "${Current}" ] && [ $Current != $Latest ]; then
-	echo "Downloading Dropbox $Latest..."
-	tmpdir=`mktemp -d`
-	curl -# -L $DL | tar xzf - -C $tmpdir
-	echo "Installing new version..."
-	rm -rf /opt/dropbox/bin/*
-	mv $tmpdir/.dropbox-dist/* /opt/dropbox/bin/
-	rm -rf $tmpdir
-  find /opt/dropbox/bin -type f -name "*.so" -exec chmod a+rx {} \;
-  find /opt/dropbox/bin -type f -name "*.so" -exec chown dropbox {} \;
-
-	echo "Dropbox updated to v$Latest"
+  	echo "Downloading Dropbox $Latest..."
+  	tmpdir=`mktemp -d`
+  	curl -# -L $DL | tar xzf - -C $tmpdir
+  	echo "Installing new version..."
+  	rm -rf /opt/dropbox/bin/*
+  	mv $tmpdir/.dropbox-dist/* /opt/dropbox/bin/
+  	rm -rf $tmpdir
+    find /opt/dropbox/bin -type f -name "*.so" -exec chmod a+rx {} \;
+    find /opt/dropbox/bin -type f -name "*.so" -exec chown dropbox {} \;
+  	echo "Dropbox updated to v$Latest"
   else
     echo "Dropbox is up-to-date"
   fi
@@ -72,8 +77,20 @@ fi
 echo ""
 umask 002
 
+echo "Patching dropbox_start.py for updated dropboxd path"
+sed -i "s:~/.dropbox-dist/dropboxd:/opt/dropbox/bin/dropboxd:g" /opt/dropbox-filesystem-fix/dropbox_start.py
+sed -i "s:/usr/bin/python:$(which python3):g" /opt/dropbox-filesystem-fix/dropbox_start.py
+
+echo ""
+
 echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
-exec gosu dropbox "$@" &
-  pid="$!"
-  trap "kill -SIGQUIT $pid" INT
-  wait
+gosu dropbox /opt/dropbox-filesystem-fix/dropbox_start.py
+export DROPBOX_PID=$(pidof dropbox)
+trap "kill -SIGQUIT ${DROPBOX_PID}" INT
+
+# Dropbox likes to restart itself. In that case, the container will exit!
+while kill -0 ${DROPBOX_PID} 2> /dev/null; do
+  gosu dropbox dropbox status
+  sleep 1
+done
+

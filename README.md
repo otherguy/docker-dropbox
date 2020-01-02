@@ -101,6 +101,13 @@ The actual Dropbox folder, containing all your synced files.
 Account and other settings for Dropbox. If you don't mount this folder, your account needs to be linked
 every time you restart the container.
 
+## Note 📝
+
+It appears that as of `December 2019`, Dropbox (version `87.4.138`) is now finally enforcing its 
+[file system requirements](https://help.dropbox.com/installs-integrations/desktop/system-requirements#linux).
+Because this causes problems with Docker volume mounts, this container now includes the 
+[`dropbox-filesystem-fix` patch](https://github.com/dark/dropbox-filesystem-fix/).
+
 ## Inspiration 💅
 
 Originally forked from [`janeczku/dropbox`](https://hub.docker.com/r/janeczku/dropbox/). Thank you
