@@ -81,11 +81,11 @@ For example, to get an overview of the commands possible, use `help`:
 ### Environment Variables
 
 - `DROPBOX_UID`
-If set, runs Dropbox with a custom user id. This must matching the user id of the owner of the mounted
+If set, runs Dropbox with a custom user id. This **must** match the user id of the owner of the mounted
 files. Defaults to `1000`.
 
 - `DROPBOX_GID`
-If set, runs Dropbox with a custom user id. This must matching the group id of the owner of the mounted
+If set, runs Dropbox with a custom user id. This **must** match the group id of the owner of the mounted
 files. Defaults to `1000`.
 
 - `DROPBOX_SKIP_UPDATE`
@@ -103,10 +103,9 @@ every time you restart the container.
 
 ## Note 📝
 
-It appears that as of `December 2019`, Dropbox (version `87.4.138`) is now finally enforcing its 
-[file system requirements](https://help.dropbox.com/installs-integrations/desktop/system-requirements#linux).
-Because this causes problems with Docker volume mounts, this container now includes the 
-[`dropbox-filesystem-fix` patch](https://github.com/dark/dropbox-filesystem-fix/).
+It appears that as of Dropbox version `81.3.183`, the [`dropbox-filesystem-fix` patch](https://github.com/dark/dropbox-filesystem-fix/)
+is [unable to get around the filesystem detection](https://github.com/dark/dropbox-filesystem-fix/issues/13).
+
 
 ## Inspiration 💅
 

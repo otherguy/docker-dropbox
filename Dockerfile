@@ -20,7 +20,11 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install prerequisites
 RUN apt-get update \
- && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 software-properties-common gosu locales locales-all unzip build-essential
+ && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 \
+                                               software-properties-common gosu locales locales-all \
+                                               libc6 libglapi-mesa libxdamage1 libxfixes3 libxcb-glx0 \
+                                               libxcb-dri2-0 libxcb-dri3-0 libxcb-present0 libxcb-sync1 \
+                                               libxshmfence1 libxxf86vm1 tzdata
 
 # Create user and group
 RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
@@ -46,16 +50,9 @@ EXPOSE 17500
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FC918B335044912E \
  && add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
  && apt-get update \
- && apt-get install -y --no-install-recommends libatomic1 python3-gpg dropbox \
- && rm -rf /var/lib/apt/lists/*
-
-RUN curl --location https://github.com/dark/dropbox-filesystem-fix/archive/master.zip > /tmp/dropbox-filesystem-fix.zip \
- && unzip /tmp/dropbox-filesystem-fix.zip -d /opt \
- && rm /tmp/dropbox-filesystem-fix.zip \
- && mv /opt/dropbox-filesystem-fix-master/ /opt/dropbox-filesystem-fix/ \
- && cd /opt/dropbox-filesystem-fix/ \
- && make \
- && chmod +x /opt/dropbox-filesystem-fix/dropbox_start.py
+ && apt-get -qqy install python3-gpg dropbox \
+ && apt-get -qqy autoclean \                        
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Dropbox insists on downloading its binaries itself via 'dropbox start -i'
 RUN echo "y" | gosu dropbox dropbox start -i
@@ -80,4 +77,4 @@ COPY docker-entrypoint.sh /
 
 # Set entrypoint and command
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["/opt/dropbox-filesystem-fix/dropbox_start.py"]
+CMD ["/opt/dropbox/bin/dropboxd"]

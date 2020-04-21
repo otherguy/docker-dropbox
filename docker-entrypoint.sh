@@ -66,8 +66,7 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   	rm -rf /opt/dropbox/bin/*
   	mv $tmpdir/.dropbox-dist/* /opt/dropbox/bin/
   	rm -rf $tmpdir
-    find /opt/dropbox/bin -type f -name "*.so" -exec chmod a+rx {} \;
-    find /opt/dropbox/bin -type f -name "*.so" -exec chown dropbox {} \;
+    find /opt/dropbox/bin/ -type f -name "*.so" -exec chown ${DROPBOX_UID}:${DROPBOX_GID} {} \; -exec chmod a+rx {} \;
   	echo "Dropbox updated to v$Latest"
   else
     echo "Dropbox is up-to-date"
@@ -77,20 +76,8 @@ fi
 echo ""
 umask 002
 
-echo "Patching dropbox_start.py for updated dropboxd path"
-sed -i "s:~/.dropbox-dist/dropboxd:/opt/dropbox/bin/dropboxd:g" /opt/dropbox-filesystem-fix/dropbox_start.py
-sed -i "s:/usr/bin/python:$(which python3):g" /opt/dropbox-filesystem-fix/dropbox_start.py
-
-echo ""
-
 echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
-gosu dropbox /opt/dropbox-filesystem-fix/dropbox_start.py
-export DROPBOX_PID=$(pidof dropbox)
-trap "kill -SIGQUIT ${DROPBOX_PID}" INT
-
-# Dropbox likes to restart itself. In that case, the container will exit!
-while kill -0 ${DROPBOX_PID} 2> /dev/null; do
-  gosu dropbox dropbox status
-  sleep 1
-done
-
+exec gosu dropbox "$@" &
+   pid="$!"
+   trap "kill -SIGQUIT $pid" INT
+   wait
