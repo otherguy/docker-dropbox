@@ -11,7 +11,7 @@ ARG BUILD_DATE=""
 LABEL org.label-schema.schema-version "1.0"
 LABEL org.label-schema.name           "Dropbox"
 LABEL org.label-schema.build-date     "${BUILD_DATE}"
-LABEL org.label-schema.description    "Standalone Dropbox client on Linux"
+LABEL org.label-schema.description    "Standalone Dropbox client"
 LABEL org.label-schema.vcs-url        "https://github.com/otherguy/docker-dropbox"
 LABEL org.label-schema.vcs-ref        "${VCS_REF}"
 
@@ -32,9 +32,9 @@ RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
  && chown -R dropbox:dropbox /opt/dropbox
 
 # Set language
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV LANG     "en_US.UTF-8"
+ENV LANGUAGE "en_US.UTF-8"
+ENV LC_ALL   "en_US.UTF-8"
 
 # Generate locales
 RUN sed --in-place '/en_US.UTF-8/s/^# //' /etc/locale.gen \
@@ -51,7 +51,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FC918B335044912E \
  && add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
  && apt-get update \
  && apt-get -qqy install python3-gpg dropbox \
- && apt-get -qqy autoclean \                        
+ && apt-get -qqy autoclean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Dropbox insists on downloading its binaries itself via 'dropbox start -i'

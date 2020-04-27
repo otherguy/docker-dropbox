@@ -73,7 +73,10 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   fi
 fi
 
+# Empty line
 echo ""
+
+# Set umask
 umask 002
 
 echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
