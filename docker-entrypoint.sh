@@ -1,6 +1,19 @@
 #!/bin/bash
 # This script is a fork of https://github.com/excelsiord/docker-dropbox
 
+# Set TZ if not provided with enviromental variable.
+if [ -z "${TZ}" ]; then
+  export TZ="$(cat /etc/timezone)"
+else
+  if [ ! -f "/usr/share/zoneinfo/${TZ}" ]; then
+      echo "The timezone '${TZ}' is unavailable!"
+      exit 1
+  fi
+  
+  echo "${TZ}" > /etc/timezone
+  ln -fs "/usr/share/zoneinfo/${TZ}" /etc/localtime
+fi
+
 # Set UID/GID if not provided with enviromental variable(s).
 if [ -z "${DROPBOX_UID}" ]; then
   export DROPBOX_UID=$(/usr/bin/id -u dropbox)
@@ -72,6 +85,10 @@ echo ""
 
 # Set umask
 umask 002
+
+# Print timezone
+echo "Using $(cat /etc/timezone) timezone ($(date +%H:%M:%S) local time)"
+dpkg-reconfigure --frontend noninteractive tzdata
 
 echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
 exec gosu dropbox "$@" &
