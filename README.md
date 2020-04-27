@@ -53,12 +53,12 @@ This is the full command to start the Dropbox container. All volumes, environmen
 are explained in the sections below.
 
     $ docker run --detach -it --restart=always --name=dropbox \
+      --net="host" \
       -e "TZ=$(readlink /etc/localtime | sed 's#/var/db/timezone/zoneinfo/##')" \
-      -e DROPBOX_UID=$(id -u) \
-      -e DROPBOX_GID=$(id -g) \
+      -e "DROPBOX_UID=$(id -u)" \
+      -e "DROPBOX_GID=$(id -g)" \
       -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
-      --net="host" \
       otherguy/dropbox:latest
 
 ### Persisting Data
@@ -70,7 +70,8 @@ or in the other container. Failing to do so causes file permission errrors.
 The example below uses `id -u` and `id -g` to retrieve the current user's user id and group id, respectively.
 
     $ docker run --name=dropbox \
-      -e DROPBOX_UID=$(id -u) -e DROPBOX_GID=$(id -g) \
+      -e "DROPBOX_UID=$(id -u)" \
+      -e "DROPBOX_GID=$(id -g)" \
       -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
       [...]
@@ -134,6 +135,10 @@ Docker Dropbox container:
 For example, to get an overview of the commands possible, use `help`:
 
     $ docker exec -it dropbox gosu dropbox dropbox help
+    
+Or to see the current sync status use `status`:
+
+    $ docker exec -it dropbox gosu dropbox dropbox status    
 
 ## Configuration
 
@@ -171,4 +176,4 @@ Bug reports and pull requests are welcome on GitHub at [`otherguy/docker-dropbox
 
 ## ♥️ Acknowledgements
 
-- [Tony Pan](https://github.com/tcpan) for [`#3`](https://github.com/otherguy/docker-dropbox/pull/3)
+- [Tony Pan](https://github.com/tcpan) for local timezone support ([`#3`](https://github.com/otherguy/docker-dropbox/pull/3))
