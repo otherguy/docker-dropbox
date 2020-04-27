@@ -30,7 +30,6 @@ are explained in the sections below.
     $ docker run --detach -it --restart=always --name=dropbox \
       -e DROPBOX_UID=$(id -u) \
       -e DROPBOX_GID=$(id -g) \
-      -e MAX_USER_WATCHES=10000 \
       -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
       --net="host" \
@@ -44,7 +43,7 @@ or in the other container. Failing to do so causes file permission errrors.
 
 The example below uses `id -u` and `id -g` to retrieve the current user's user id and group id, respectively.
 
-    $ docker run --name=dropbox  \
+    $ docker run --name=dropbox \
       -e DROPBOX_UID=$(id -u) -e DROPBOX_GID=$(id -g) \
       -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
@@ -102,10 +101,6 @@ files. Defaults to `1000`.
 - `DROPBOX_SKIP_UPDATE`
 If set to `true`, skips updating the Dropbox app on container startup. _Note:_ This is not very reliable
 because the Dropbox daemon will still try to update itself even if this is set to `true`.
-
-- `MAX_USER_WATCHES`
-If your Dropbox data contains a lot of small files and folders, the container might fail with an error like
-`Unable to monitor entire Dropbox folder hierarchy.`. In this case, set this value to `100000`.
 
 ### Exposed Volumes
 
