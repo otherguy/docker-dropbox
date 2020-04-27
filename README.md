@@ -20,6 +20,31 @@ _This repository provides the [`otherguy/dropbox`][dockerhub] image_
 Run Dropbox inside a Docker container. Complete with local host folder mount or inter-container
 linking (via `--volumes-from`).
 
+## 🚨 Warning for macOS Users
+
+**For macOS users, mounting the Dropbox data folder is currently not possible!
+See [`#6`](https://github.com/otherguy/docker-dropbox/issues/6) for details**
+
+Back in 2018, Dropbox dropped support for several Linux filesystems and the Dropbox client [refused to
+sync](https://www.dropboxforum.com/t5/Syncing-and-uploads/Dropbox-client-warns-me-that-it-ll-stop-syncing-in-Nov-why/td-p/290058)
+when an unsupported filesystem was encountered.
+
+In July 2019, the decision was [partially rolled back](https://www.dropboxforum.com/t5/Desktop-client-builds/Beta-Build-77-3-127/m-p/355527/highlight/true#M5361),
+allowing syncing from ZFS (on 64-bit systems only), eCryptFS, XFS (on 64-bit systems only), and BTRFS
+filesystems. Other filesystems dropped by the initial change are, however, still unsupported.
+
+A [`dropbox-filesystem-fix` patch](https://github.com/dark/dropbox-filesystem-fix/) was developed by
+[`@dark`](https://github.com/dark/) and was previously used in this Docker image to make it work with
+Docker volume mounts, especially on macOS where the mounted volume uses the `FUSE` filesystem.
+
+Unfortunately, as of `January 2020` (Dropbox version `87.4.138` and later, currently up to `95.4.441`), this
+fix is [unable to get around the filesystem detection](https://github.com/dark/dropbox-filesystem-fix/issues/13)
+in the newer Dropbox client versions. Using an older version of the Dropbox client is also not possible,
+because the Dropbox API servers reject old client version and prevent them from connecting.
+
+This breaks the possibility to mount a local folder via `-v "/path/to/local/dropbox:/opt/dropbox/Dropbox"`
+on macOS systems.
+
 ## 🚀 Usage
 
 ### Quickstart
@@ -134,12 +159,6 @@ The actual Dropbox folder, containing all your synced files.
 - `/opt/dropbox/.dropbox`
 Account and other settings for Dropbox. If you don't mount this folder, your account needs to be linked
 every time you restart the container.
-
-## Note 📝
-
-It appears that as of Dropbox version `81.3.183`, the [`dropbox-filesystem-fix` patch](https://github.com/dark/dropbox-filesystem-fix/)
-is [unable to get around the filesystem detection](https://github.com/dark/dropbox-filesystem-fix/issues/13).
-
 
 ## 💅 Inspiration
 
