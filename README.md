@@ -17,8 +17,8 @@ _This repository provides the [`otherguy/dropbox`][dockerhub] image_
 [stargazers]: https://github.com/otherguy/docker-dropbox/stargazers
 [issues]: https://github.com/otherguy/docker-dropbox/issues
 
-Run Dropbox inside a Docker container. Complete with local host folder mount or inter-container
-linking (via `--volumes-from`).
+Run Dropbox inside a Docker container. Supports local host folder mount or inter-container
+linking via `--volumes-from`.
 
 ## 🚨 Warning for macOS Users
 
