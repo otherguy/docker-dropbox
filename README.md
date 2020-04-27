@@ -28,6 +28,7 @@ This is the full command to start the Dropbox container. All volumes, environmen
 are explained in the sections below.
 
     $ docker run --detach -it --restart=always --name=dropbox \
+      -e "TZ=$(readlink /etc/localtime | sed 's#/var/db/timezone/zoneinfo/##')" \
       -e DROPBOX_UID=$(id -u) \
       -e DROPBOX_GID=$(id -g) \
       -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
@@ -49,6 +50,29 @@ The example below uses `id -u` and `id -g` to retrieve the current user's user i
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
       [...]
       otherguy/dropbox:latest
+
+### Time Zones
+
+It is also highly recommended to pass your local timezone settings into the container. This fixes the problem
+of the host being on local time zone and container defaulting to `UTC` timezone. Dropbox is not checking time
+zones when comparing file timestamps, leading to overwritten files and data loss.
+
+You can pass your local timezone as an environment variable to the container: `-e "TZ=Australia/Brisbane"`
+
+If you're on Linux 🐧, you can mount your `/etc/timezone` and `/etc/localtime` files into the container instead.
+
+    $ docker run --name=dropbox \
+      -v "/etc/timezone:/etc/timezone" \
+      -v "/etc/localtime:/etc/localtime" \
+      [...]
+      otherguy/dropbox:latest
+
+For everyone else, especially users on macOS, getting your current timezone and passing it into the container
+as an environment variable, is the simplest way:
+
+    $ docker run --name=dropbox \
+      -e "TZ=$(readlink /etc/localtime | sed 's#/var/db/timezone/zoneinfo/##')"
+      [...]
       otherguy/dropbox:latest
 
 ### Enable LAN Sync
@@ -125,3 +149,7 @@ Originally forked from [`janeczku/dropbox`](https://hub.docker.com/r/janeczku/dr
 ## 🚧 Contributing
 
 Bug reports and pull requests are welcome on GitHub at [`otherguy/docker-dropbox`](https://github.com/otherguy/docker-dropbox).
+
+## ♥️ Acknowledgements
+
+- [Tony Pan](https://github.com/tcpan) for [`#3`](https://github.com/otherguy/docker-dropbox/pull/3)

@@ -1,3 +1,4 @@
+# Based on Debian
 FROM debian:buster
 
 # Maintainer
@@ -16,7 +17,8 @@ LABEL org.label-schema.vcs-url        "https://github.com/otherguy/docker-dropbo
 LABEL org.label-schema.vcs-ref        "${VCS_REF}"
 
 # Required to prevent warnings
-ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBCONF_NONINTERACTIVE_SEEN=true
 
 # Install prerequisites
 RUN apt-get update \
