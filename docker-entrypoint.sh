@@ -62,7 +62,7 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   Latest=$(echo $DL | sed 's/.*x86_64-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
 
   # Get current Version
-  Current=$(cat /opt/dropbox/bin/VERSION)
+  Current=$(cat /opt/dropbox/VERSION)
   echo "Latest   :" $Latest
   echo "Installed:" $Current
   if [ ! -z "${Latest}" ] && [ ! -z "${Current}" ] && [ $Current != $Latest ]; then
@@ -90,7 +90,7 @@ umask 002
 echo "Using $(cat /etc/timezone) timezone ($(date +%H:%M:%S) local time)"
 dpkg-reconfigure --frontend noninteractive tzdata
 
-echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
+echo "Starting dropboxd ($(cat /opt/dropbox/VERSION))..."
 exec gosu dropbox "$@" &
    pid="$!"
    trap "kill -SIGQUIT $pid" INT
