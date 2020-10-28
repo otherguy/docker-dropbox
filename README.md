@@ -54,7 +54,7 @@ are explained in the sections below.
 
     $ docker run --detach -it --restart=always --name=dropbox \
       --net="host" \
-      -e "TZ=$(readlink /etc/localtime | sed 's#/var/db/timezone/zoneinfo/##')" \
+      -e "TZ=$(readlink /etc/localtime | sed 's#^.*/zoneinfo/##')" \
       -e "DROPBOX_UID=$(id -u)" \
       -e "DROPBOX_GID=$(id -g)" \
       -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
@@ -93,11 +93,11 @@ If you're on Linux 🐧, you can mount your `/etc/timezone` and `/etc/localtime`
       [...]
       otherguy/dropbox:latest
 
-If you are on macOS, getting your current timezone and passing it into the container as an environment variable, 
-is the simplest way:
+If you are on macOS or Linux, getting your current timezone and passing it into the container as an environment
+variable, is the simplest way.
 
     $ docker run --name=dropbox \
-      -e "TZ=$(readlink /etc/localtime | sed 's#/var/db/timezone/zoneinfo/##')"
+      -e "TZ=$(readlink /etc/localtime | sed 's#^.*/zoneinfo/##')" \
       [...]
       otherguy/dropbox:latest
 
