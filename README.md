@@ -135,10 +135,10 @@ Docker Dropbox container:
 For example, to get an overview of the commands possible, use `help`:
 
     $ docker exec -it dropbox gosu dropbox dropbox help
-    
+
 Or to see the current sync status use `status`:
 
-    $ docker exec -it dropbox gosu dropbox dropbox status    
+    $ docker exec -it dropbox gosu dropbox dropbox status
 
 ## Configuration
 

@@ -1,5 +1,4 @@
 #!/bin/bash
-# This script is a fork of https://github.com/excelsiord/docker-dropbox
 
 # Set TZ if not provided with enviromental variable.
 if [ -z "${TZ}" ]; then
@@ -9,7 +8,7 @@ else
       echo "The timezone '${TZ}' is unavailable!"
       exit 1
   fi
-  
+
   echo "${TZ}" > /etc/timezone
   ln -fs "/usr/share/zoneinfo/${TZ}" /etc/localtime
 fi
@@ -62,7 +61,7 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   Latest=$(echo $DL | sed 's/.*x86_64-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
 
   # Get current Version
-  Current=$(cat /opt/dropbox/VERSION)
+  Current=$(cat /opt/dropbox/bin/VERSION)
   echo "Latest   :" $Latest
   echo "Installed:" $Current
   if [ ! -z "${Latest}" ] && [ ! -z "${Current}" ] && [ $Current != $Latest ]; then
@@ -90,8 +89,16 @@ umask 002
 echo "Using $(cat /etc/timezone) timezone ($(date +%H:%M:%S) local time)"
 dpkg-reconfigure --frontend noninteractive tzdata
 
-echo "Starting dropboxd ($(cat /opt/dropbox/VERSION))..."
-exec gosu dropbox "$@" &
-   pid="$!"
-   trap "kill -SIGQUIT $pid" INT
-   wait
+# Start Dropbox
+echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
+gosu dropbox "$@" & export DROPBOX_PID="$!"
+trap "/bin/kill -SIGQUIT ${DROPBOX_PID}" INT
+
+# Wait a few seconds for the Dropbox daemon to start
+sleep 5
+
+# Dropbox likes to restart itself. In that case, the container will exit!
+while kill -0 ${DROPBOX_PID} 2> /dev/null; do
+  [ -d "/proc/${DROPBOX_PID}" ] && [ -f "/opt/dropbox/.dropbox/info.json" ] && gosu dropbox dropbox status
+  sleep 1
+done
