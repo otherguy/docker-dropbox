@@ -165,15 +165,11 @@ The actual Dropbox folder, containing all your synced files.
 Account and other settings for Dropbox. If you don't mount this folder, your account needs to be linked
 every time you restart the container.
 
-## 💅 Inspiration
-
-Originally forked from [`janeczku/dropbox`](https://hub.docker.com/r/janeczku/dropbox/). Thank you
-[@janeczku](https://github.com/janeczku) for your work!
-
 ## 🚧 Contributing
 
 Bug reports and pull requests are welcome on GitHub at [`otherguy/docker-dropbox`](https://github.com/otherguy/docker-dropbox).
 
 ## ♥️ Acknowledgements
 
+- [Jan Broer](https://github.com/janeczku) for the original repository [`janeczku/dropbox`](https://hub.docker.com/r/janeczku/dropbox/)
 - [Tony Pan](https://github.com/tcpan) for local timezone support ([`#3`](https://github.com/otherguy/docker-dropbox/pull/3))
