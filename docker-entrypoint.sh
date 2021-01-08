@@ -100,5 +100,6 @@ sleep 5
 # Dropbox likes to restart itself. In that case, the container will exit!
 while kill -0 ${DROPBOX_PID} 2> /dev/null; do
   [ -d "/proc/${DROPBOX_PID}" ] && [ -f "/opt/dropbox/.dropbox/info.json" ] && gosu dropbox dropbox status
-  sleep 1
+  /usr/bin/find /tmp -maxdepth 1 -type d -mtime +1 -exec rm -rf {} \;
+  /bin/sleep 1
 done
