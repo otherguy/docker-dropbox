@@ -63,7 +63,7 @@ RUN echo "y" | gosu dropbox dropbox start -i
 # file system over time with rather large files written to /opt/dropbox/ and /tmp.
 #
 # https://bbs.archlinux.org/viewtopic.php?id=191001
-RUN mkdir -p /opt/dropbox/bin/ \
+RUN mkdir -p /opt/dropbox/bin/ /tmp \
  && mv /opt/dropbox/.dropbox-dist/* /opt/dropbox/bin/ \
  && rm -rf /opt/dropbox/.dropbox-dist \
  && install -dm0 /opt/dropbox/.dropbox-dist \
