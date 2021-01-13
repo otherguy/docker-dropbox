@@ -37,7 +37,7 @@ A [`dropbox-filesystem-fix` patch](https://github.com/dark/dropbox-filesystem-fi
 [`@dark`](https://github.com/dark/) and was previously used in this Docker image to make it work with
 Docker volume mounts, especially on macOS where the mounted volume uses the `FUSE` filesystem.
 
-Unfortunately, as of `January 2020` (Dropbox version `87.4.138` and later, currently up to `95.4.441`), this
+Unfortunately, as of `January 2020` (Dropbox version `87.4.138` and later, currently up to ~`95.4.441`~ `112.4.321`), this
 fix is [unable to get around the filesystem detection](https://github.com/dark/dropbox-filesystem-fix/issues/13)
 in the newer Dropbox client versions. Using an older version of the Dropbox client is also not possible,
 because the Dropbox API servers reject old client version and prevent them from connecting.
