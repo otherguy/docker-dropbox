@@ -6,7 +6,7 @@ _This repository provides the [`otherguy/dropbox`][dockerhub] image_
 [![Docker Stars](https://img.shields.io/docker/stars/otherguy/dropbox)][dockerhub]
 [![GitHub issues](https://img.shields.io/github/issues/otherguy/docker-dropbox)][issues]
 [![Travis](https://img.shields.io/travis/com/otherguy/docker-dropbox)][travis]
-[![MicroBadger Layers](https://img.shields.io/microbadger/layers/otherguy/docker-dropbox)][microbadger]
+[![MicroBadger Layers](https://img.shields.io/microbadger/layers/otherguy/dropbox)][microbadger]
 [![GitHub stars](https://img.shields.io/github/stars/otherguy/docker-dropbox?color=violet)][stargazers]
 [![MIT License](https://img.shields.io/github/license/otherguy/docker-dropbox?color=orange)][license]
 
