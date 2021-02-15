@@ -75,7 +75,7 @@ LABEL org.label-schema.vcs-url        "https://github.com/otherguy/docker-dropbo
 LABEL org.label-schema.vcs-ref        "${VCS_REF}"
 
 # Configurable sleep delay
-ENV SLEEP_DELAY=5
+ENV POLLING_INTERVAL=5
 
 # Install init script and dropbox command line wrapper
 COPY docker-entrypoint.sh /

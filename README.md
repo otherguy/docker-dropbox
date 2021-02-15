@@ -156,7 +156,7 @@ files. Defaults to `1000`.
 If set to `true`, skips updating the Dropbox app on container startup. _Note:_ This is not very reliable
 because the Dropbox daemon will still try to update itself even if this is set to `true`.
 
-- `SLEEP_DELAY`
+- `POLLING_INTERVAL`
 Needs to be set to a positive integer value. The Dropbox daemon is polled for its status at regular intervals,
 which can be configured to reduce load on the system. This is the number in seconds to wait between polling the
 Dropbox daemon. Defaults to `5`.
