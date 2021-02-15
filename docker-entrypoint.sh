@@ -31,6 +31,11 @@ if [ -z "$(grep ":${DROPBOX_GID}:" /etc/group)" ]; then
   groupadd -g $DROPBOX_GID dropbox
 fi
 
+if [[ ! "${SLEEP_DELAY}" =~ ^[0-9]+$ ]]; then
+  echo "SLEEP_DELAY not set to a valid number, defaulting to 5!"
+  export SLEEP_DELAY=5
+fi
+
 # Set dropbox account's UID/GID.
 usermod -u ${DROPBOX_UID} -g ${DROPBOX_GID} --non-unique dropbox > /dev/null 2>&1
 
@@ -101,5 +106,5 @@ sleep 5
 while kill -0 ${DROPBOX_PID} 2> /dev/null; do
   [ -d "/proc/${DROPBOX_PID}" ] && [ -f "/opt/dropbox/.dropbox/info.json" ] && gosu dropbox dropbox status
   /usr/bin/find /tmp -maxdepth 1 -type d -mtime +1 -exec rm -rf {} \;
-  /bin/sleep 1
+  /bin/sleep ${SLEEP_DELAY}
 done
