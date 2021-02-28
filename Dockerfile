@@ -15,32 +15,28 @@ WORKDIR /opt/dropbox/Dropbox
 EXPOSE 17500
 
 # Set language
-ENV LANG     "en_US.UTF-8"
-ENV LANGUAGE "en_US.UTF-8"
-ENV LC_ALL   "en_US.UTF-8"
+ENV LANG   "C.UTF-8"
+ENV LC_ALL "C.UTF-8"
 
 # Install prerequisites
 RUN apt-get update \
- && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl gnupg2 \
-                                               software-properties-common gosu locales locales-all \
-                                               libc6 libglapi-mesa libxdamage1 libxfixes3 libxcb-glx0 \
-                                               libxcb-dri2-0 libxcb-dri3-0 libxcb-present0 libxcb-sync1 \
-                                               libxshmfence1 libxxf86vm1 tzdata
+ && apt-get install -y --no-install-recommends \
+   software-properties-common gnupg2 \
+   libglapi-mesa libxext-dev libxdamage-dev libxshmfence-dev libxxf86vm-dev \
+   libxcb-glx0 libxcb-dri2-0 libxcb-dri3-0 libxcb-present-dev \
+   ca-certificates gosu tzdata
 
 # Create user and group
 RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
  && useradd --home-dir /opt/dropbox --comment "Dropbox Daemon Account" --user-group --shell /usr/sbin/nologin dropbox \
  && chown -R dropbox:dropbox /opt/dropbox
 
-# Generate locales
-RUN sed --in-place '/en_US.UTF-8/s/^# //' /etc/locale.gen \
- && locale-gen
-
 # https://help.dropbox.com/installs-integrations/desktop/linux-repository
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FC918B335044912E \
  && add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
  && apt-get update \
  && apt-get -qqy install python3-gpg dropbox \
+ && apt-get remove -qqy software-properties-common gnupg2 \
  && apt-get -qqy autoclean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

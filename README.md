@@ -57,6 +57,7 @@ are explained in the sections below.
       -e "TZ=$(readlink /etc/localtime | sed 's#^.*/zoneinfo/##')" \
       -e "DROPBOX_UID=$(id -u)" \
       -e "DROPBOX_GID=$(id -g)" \
+      -e "POLLING_INTERVAL=20" \
       -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
       otherguy/dropbox:latest
