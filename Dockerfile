@@ -1,5 +1,5 @@
 # Based on Debian
-FROM debian:buster
+FROM debian:buster-slim
 
 # Maintainer
 LABEL maintainer "Alexander Graf <alex@otherguy.io>"
