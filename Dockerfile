@@ -21,7 +21,7 @@ ENV LC_ALL "C.UTF-8"
 # Install prerequisites
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-   software-properties-common gnupg2 \
+   software-properties-common gnupg2 curl \
    libglapi-mesa libxext-dev libxdamage-dev libxshmfence-dev libxxf86vm-dev \
    libxcb-glx0 libxcb-dri2-0 libxcb-dri3-0 libxcb-present-dev \
    ca-certificates gosu tzdata
