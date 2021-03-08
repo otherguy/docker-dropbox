@@ -60,6 +60,7 @@ VOLUME ["/opt/dropbox/.dropbox", "/opt/dropbox/Dropbox"]
 
 # Build arguments
 ARG VCS_REF=master
+ARG VERSION=""
 ARG BUILD_DATE=""
 
 # http://label-schema.org/rc1/
