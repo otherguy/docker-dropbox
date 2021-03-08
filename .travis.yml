@@ -1,13 +1,13 @@
 os: linux
 
 services:
-  - docker 
+  - docker
 
 script:
-  - docker build --build-arg BUILD_DATE="$(date --rfc-3339=seconds | sed 's/ /T/')" --build-arg VCS_REF="$(echo $TRAVIS_COMMIT | cut -c -7)" --tag otherguy/dropbox:latest .
+  - docker build --build-arg VERSION="${TRAVIS_BRANCH}" --build-arg BUILD_DATE="$(date --rfc-3339=seconds | sed 's/ /T/')" --build-arg VCS_REF="$(echo $TRAVIS_COMMIT | cut -c -7)" --tag otherguy/dropbox:latest .
 
 before_deploy:
-  - echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin 
+  - echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin && echo "${GITHUB_TOKEN}" | docker login docker.pkg.github.com -u "${GITHUB_USERNAME}" --password-stdin
 
 deploy:
   - provider: script
