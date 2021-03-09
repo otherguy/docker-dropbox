@@ -62,6 +62,14 @@ are explained in the sections below.
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
       otherguy/dropbox:latest
 
+### Checking Dropbox Version
+
+Dropbox will return incorrect information (`Dropbox daemon version: Not installed`) when you run `dropbox version` in 
+the container. In case you ever need to know which version you have installed, instead run the following:
+
+    $ docker exec -it dropbox cat /opt/dropbox/bin/VERSION
+
+
 ### Persisting Data
 
 When mounting the Dropbox data folder to your local filesystem, you need to set the `DROPBOX_UID` and
