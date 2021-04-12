@@ -149,7 +149,7 @@ Or to see the current sync status use `status`:
 
     $ docker exec -it dropbox gosu dropbox dropbox status
 
-## Configuration
+## 🛠 Configuration
 
 ### Environment Variables
 
@@ -178,6 +178,19 @@ The actual Dropbox folder, containing all your synced files.
 - `/opt/dropbox/.dropbox`
 Account and other settings for Dropbox. If you don't mount this folder, your account needs to be linked
 every time you restart the container.
+
+## 🤨 Questions and Gotchas
+
+### Monitoring more than 10,000 folders on Linux
+
+From [Troubleshoot Dropbox syncing issues](https://help.dropbox.com/installs-integrations/sync-uploads/files-not-syncing):
+
+> The Linux version of the Dropbox desktop app is limited from monitoring more than 10,000 folders by default. Anything more than that is not watched and, therefore, ignored when syncing. There's an easy fix for this. Open a terminal and enter the following:
+> 
+> `echo fs.inotify.max_user_watches=100000 | sudo tee -a /etc/sysctl.conf; sudo sysctl -p`
+> 
+> This command will tell your system to watch up to 100,000 folders. Once the command is entered and you enter your password, Dropbox will immediately resume syncing.
+
 
 ## 🚧 Contributing
 
