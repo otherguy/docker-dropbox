@@ -64,7 +64,7 @@ are explained in the sections below.
 
 ### Checking Dropbox Version
 
-Dropbox will return incorrect information (`Dropbox daemon version: Not installed`) when you run `dropbox version` in 
+Dropbox will return incorrect information (`Dropbox daemon version: Not installed`) when you run `dropbox version` in
 the container. In case you ever need to know which version you have installed, instead run the following:
 
     $ docker exec -it dropbox cat /opt/dropbox/bin/VERSION
@@ -170,6 +170,11 @@ Needs to be set to a positive integer value. The Dropbox daemon is polled for it
 which can be configured to reduce load on the system. This is the number in seconds to wait between polling the
 Dropbox daemon. Defaults to `5`.
 
+- `SKIP_SET_PERMISSIONS`
+If this is set to `true`, the container skips setting the permissions on all files in the `/opt/dropbox` folder
+in order to prevent long startup times. _Note:_ please make sure to have correct permissions on all files before
+you do this! Implemented for [#25](https://github.com/otherguy/docker-dropbox/issues/25).
+
 ### Exposed Volumes
 
 - `/opt/dropbox/Dropbox`
@@ -186,9 +191,9 @@ every time you restart the container.
 From [Troubleshoot Dropbox syncing issues](https://help.dropbox.com/installs-integrations/sync-uploads/files-not-syncing):
 
 > The Linux version of the Dropbox desktop app is limited from monitoring more than 10,000 folders by default. Anything more than that is not watched and, therefore, ignored when syncing. There's an easy fix for this. Open a terminal and enter the following:
-> 
+>
 > `echo fs.inotify.max_user_watches=100000 | sudo tee -a /etc/sysctl.conf; sudo sysctl -p`
-> 
+>
 > This command will tell your system to watch up to 100,000 folders. Once the command is entered and you enter your password, Dropbox will immediately resume syncing.
 
 

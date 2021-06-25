@@ -40,7 +40,12 @@ fi
 usermod -u ${DROPBOX_UID} -g ${DROPBOX_GID} --non-unique dropbox > /dev/null 2>&1
 
 # Change ownership to dropbox account on all working folders.
-chown -R ${DROPBOX_UID}:${DROPBOX_GID} /opt/dropbox
+if [[ $(echo "${SKIP_SET_PERMISSIONS:-false}" | tr '[:upper:]' '[:lower:]' | tr -d " ") == "true" ]]; then
+  echo "Skipping permissions check, ensure the dropbox user owns all files!"
+  chown ${DROPBOX_UID}:${DROPBOX_GID} /opt/dropbox
+else
+  chown -R ${DROPBOX_UID}:${DROPBOX_GID} /opt/dropbox
+fi
 
 # Change permissions on Dropbox folder
 chmod 755 /opt/dropbox/Dropbox
