@@ -74,6 +74,8 @@ LABEL org.label-schema.vcs-ref        "${VCS_REF}"
 
 # Configurable sleep delay
 ENV POLLING_INTERVAL=5
+# Possibility to skip permission check
+ENV SKIP_SET_PERMISSIONS=false
 
 # Install init script and dropbox command line wrapper
 COPY docker-entrypoint.sh /
