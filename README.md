@@ -112,8 +112,7 @@ variable, is the simplest way.
 
 ### Enable LAN Sync
 
-Using `--net="host"` allows Dropbox to utilize [local LAN sync]
-(https://help.dropbox.com/installs-integrations/sync-uploads/lan-sync-overview).
+Using `--net="host"` allows Dropbox to utilize [local LAN sync](https://help.dropbox.com/installs-integrations/sync-uploads/lan-sync-overview).
 
     $ docker run --name=dropbox \
       --net="host" \
