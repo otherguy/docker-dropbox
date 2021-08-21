@@ -169,6 +169,10 @@ Needs to be set to a positive integer value. The Dropbox daemon is polled for it
 which can be configured to reduce load on the system. This is the number in seconds to wait between polling the
 Dropbox daemon. Defaults to `5`.
 
+- `POLLING_CHECK`
+Arbitrary command to execute during polling. This can be used to set up external healtchecks.
+Defaults to no command at all.
+
 - `SKIP_SET_PERMISSIONS`
 If this is set to `true`, the container skips setting the permissions on all files in the `/opt/dropbox` folder
 in order to prevent long startup times. _Note:_ please make sure to have correct permissions on all files before
