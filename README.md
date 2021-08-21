@@ -171,7 +171,8 @@ Dropbox daemon. Defaults to `5`.
 
 - `POLLING_CHECK`
 Arbitrary command to execute during polling. This can be used to set up external healtchecks.
-Defaults to no command at all.
+Defaults to no command at all. For instance:
+`POLLING_CHECK=curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
 
 - `SKIP_SET_PERMISSIONS`
 If this is set to `true`, the container skips setting the permissions on all files in the `/opt/dropbox` folder
