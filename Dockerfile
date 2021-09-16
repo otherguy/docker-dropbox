@@ -1,4 +1,4 @@
-# Based on Debian 11 (Bullseye)
+# Based on Ubuntu 21.10
 FROM ubuntu:21.10
 
 # Maintainer
