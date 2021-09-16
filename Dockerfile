@@ -1,5 +1,5 @@
-# Based on Debian
-FROM debian:buster-slim
+# Based on Debian 11 (Bullseye)
+FROM ubuntu:21.10
 
 # Maintainer
 LABEL maintainer "Alexander Graf <alex@otherguy.io>"
@@ -19,12 +19,14 @@ ENV LANG   "C.UTF-8"
 ENV LC_ALL "C.UTF-8"
 
 # Install prerequisites
-RUN apt-get update \
+RUN chmod 1777 /tmp \
+ && apt-get update \
  && apt-get install -y --no-install-recommends \
    software-properties-common gnupg2 curl \
    libglapi-mesa libxext-dev libxdamage-dev libxshmfence-dev libxxf86vm-dev \
    libxcb-glx0 libxcb-dri2-0 libxcb-dri3-0 libxcb-present-dev \
-   ca-certificates gosu tzdata
+   ca-certificates gosu tzdata libc6 libxdamage1 libxcb-present0 \
+   libxcb-sync1 libxshmfence1 libxxf86vm1 python3-gpg
 
 # Create user and group
 RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
@@ -35,8 +37,7 @@ RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FC918B335044912E \
  && add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
  && apt-get update \
- && apt-get -qqy install python3-gpg dropbox \
- && apt-get remove -qqy software-properties-common gnupg2 \
+ && apt-get -qqy install dropbox \
  && apt-get -qqy autoclean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
