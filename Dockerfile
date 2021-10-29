@@ -19,8 +19,7 @@ ENV LANG   "C.UTF-8"
 ENV LC_ALL "C.UTF-8"
 
 # Install prerequisites
-RUN chmod 1777 /tmp \
- && apt-get update \
+RUN apt-get update \
  && apt-get install -y --no-install-recommends \
    software-properties-common gnupg2 curl \
    libglapi-mesa libxext-dev libxdamage-dev libxshmfence-dev libxxf86vm-dev \
