@@ -25,8 +25,9 @@ jobs:
       #   with:
       #     push: true
       #     tags: user/app:latest
-      - name: Send GitHub Action trigger data to Slack workflow
-        id: slack
-        uses: slackapi/slack-github-action@v1.14.0
+      - name: Send GitHub Action data to Slack
+        uses: act10ns/slack@v1.2.2
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
