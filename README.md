@@ -126,7 +126,7 @@ authentication URL:
 
     $ docker logs --follow dropbox
 
-![Dropbox Account Linking](https://github.com/otherguy/docker-dropbox/raw/master/dropbox.gif)
+![Dropbox Account Linking](https://github.com/otherguy/docker-dropbox/raw/main/dropbox.gif)
 
 Copy and paste the URL in a browser and login to your Dropbox account to associate the Docker container.
 You should see something like this:

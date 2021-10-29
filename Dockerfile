@@ -59,7 +59,7 @@ RUN mkdir -p /opt/dropbox/bin/ /tmp \
 VOLUME ["/opt/dropbox/.dropbox", "/opt/dropbox/Dropbox"]
 
 # Build arguments
-ARG VCS_REF=master
+ARG VCS_REF=main
 ARG VERSION=""
 ARG BUILD_DATE=""
 

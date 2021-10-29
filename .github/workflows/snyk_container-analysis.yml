@@ -10,7 +10,7 @@ name: Snyk Container
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   schedule:
     - cron: '41 3 * * 2'
 
