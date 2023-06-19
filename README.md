@@ -58,7 +58,7 @@ are explained in the sections below.
       -e "DROPBOX_UID=$(id -u)" \
       -e "DROPBOX_GID=$(id -g)" \
       -e "POLLING_INTERVAL=20" \
-      -v "/path/to/local/settings:/opt/dropbox/.dropbox" \
+      -v "/path/to/local/settings:/opt/dropbox" \
       -v "/path/to/local/dropbox:/opt/dropbox/Dropbox" \
       otherguy/dropbox:latest
 
@@ -174,16 +174,20 @@ If this is set to `true`, the container skips setting the permissions on all fil
 in order to prevent long startup times. _Note:_ please make sure to have correct permissions on all files before
 you do this! Implemented for [#25](https://github.com/otherguy/docker-dropbox/issues/25).
 
-### Exposed Volumes
+### Volumes
+
+- `/opt/dropbox`
+This represents the daemon user's home directory in the container. On the host, it will be populated with some binaries, some configuration, account settings, and other settings for Dropbox. If you don't mount this folder, your account needs to be linked every time you restart the container.
 
 - `/opt/dropbox/Dropbox`
-The actual Dropbox folder, containing all your synced files.
+The actual Dropbox folder, containing all your synced files. Note that you may need to omit this on the first run so that Dropbox can have control to create it. Once it is created in the other volume, you can recreate the container with this volume as well.
 
-- `/opt/dropbox/.dropbox`
-Account and other settings for Dropbox. If you don't mount this folder, your account needs to be linked
-every time you restart the container.
 
 ## 🤨 Questions and Gotchas
+
+### "Dropbox needs to rename your existing folder or file named Dropbox to finish installing"
+
+Dropbox may fail with this error message present in logs (visible with `docker logs`). If this happens, you'll need to run the container once without the `/opt/dropbox/Dropbox` volume. See the notes on this above.
 
 ### Monitoring more than 10,000 folders on Linux
 
