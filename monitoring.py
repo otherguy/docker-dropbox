@@ -167,6 +167,9 @@ class DropboxMonitor:
                 if line == "Dropbox isn't running!":
                     state = State.NOT_RUNNING
                 else:
+                    # Hack: remove commas; simplifies the regex
+                    line = line.replace(',', '')
+
                     status_match = self.status_matcher.match(line)
                     status_match_with_file = self.status_matcher_with_file.match(line)
                     if status_match:
