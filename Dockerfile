@@ -1,5 +1,5 @@
-# Based on Ubuntu 21.10
-FROM ubuntu:21.10
+# Based on Ubuntu 22.04
+FROM ubuntu:22.04
 
 # Maintainer
 LABEL maintainer "Alexander Graf <alex@otherguy.io>"
@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBCONF_NONINTERACTIVE_SEEN=true
 
 # Change working directory
-WORKDIR /opt/dropbox/Dropbox
+WORKDIR /opt/dropbox
 
 # Not really required for --net=host
 EXPOSE 17500
@@ -21,42 +21,19 @@ ENV LC_ALL "C.UTF-8"
 # Install prerequisites
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-   software-properties-common gnupg2 curl \
+   software-properties-common gnupg2 curl wget \
    libglapi-mesa libxext-dev libxdamage-dev libxshmfence-dev libxxf86vm-dev \
    libxcb-glx0 libxcb-dri2-0 libxcb-dri3-0 libxcb-present-dev \
    ca-certificates gosu tzdata libc6 libxdamage1 libxcb-present0 \
    libxcb-sync1 libxshmfence1 libxxf86vm1 python3-gpg python3-pip
 
 # Create user and group
-RUN mkdir -p /opt/dropbox /opt/dropbox/.dropbox /opt/dropbox/Dropbox \
+RUN mkdir -p /opt/dropbox \
  && useradd --home-dir /opt/dropbox --comment "Dropbox Daemon Account" --user-group --shell /usr/sbin/nologin dropbox \
  && chown -R dropbox:dropbox /opt/dropbox
 
-# https://help.dropbox.com/installs-integrations/desktop/linux-repository
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FC918B335044912E \
- && add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
- && apt-get update \
- && apt-get -qqy install dropbox \
- && apt-get -qqy autoclean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Dropbox insists on downloading its binaries itself via 'dropbox start -i'
-RUN echo "y" | gosu dropbox dropbox start -i
-
-# Dropbox has the nasty tendency to update itself without asking. In the processs it fills the
-# file system over time with rather large files written to /opt/dropbox/ and /tmp.
-#
-# https://bbs.archlinux.org/viewtopic.php?id=191001
-RUN mkdir -p /opt/dropbox/bin/ /tmp \
- && mv /opt/dropbox/.dropbox-dist/* /opt/dropbox/bin/ \
- && rm -rf /opt/dropbox/.dropbox-dist \
- && install -dm0 /opt/dropbox/.dropbox-dist \
- && chmod u-w /opt/dropbox/.dropbox-dist \
- && chmod o-w /tmp \
- && chmod g-w /tmp
-
 # Create volumes
-VOLUME ["/opt/dropbox/.dropbox", "/opt/dropbox/Dropbox"]
+VOLUME ["/opt/dropbox"]
 
 # Build arguments
 ARG VCS_REF=main
