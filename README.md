@@ -174,6 +174,13 @@ If this is set to `true`, the container skips setting the permissions on all fil
 in order to prevent long startup times. _Note:_ please make sure to have correct permissions on all files before
 you do this! Implemented for [#25](https://github.com/otherguy/docker-dropbox/issues/25).
 
+- `ENABLE_MONITORING`
+If this is set to `true`, an endpoint for Prometheus monitoring is enabled on port 8000. This provides the metrics
+`dropbox_status`, `dropbox_num_syncing`, `dropbox_num_downloading`, and `dropbox_num_uploading`, which may be 
+useful for setting alerts to ensure that Dropbox is syncing properly and keeps itself up to date. Note this is 
+still experimental and off by default.
+
+
 ### Volumes
 
 - `/opt/dropbox`

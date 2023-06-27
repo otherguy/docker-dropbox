@@ -130,6 +130,13 @@ echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
 gosu dropbox "$@" & export DROPBOX_PID="$!"
 trap "/bin/kill -SIGQUIT ${DROPBOX_PID}" INT
 
+# Optionally start monitoring script
+if [[ $(echo "${ENABLE_MONITORING:-false}" | tr '[:upper:]' '[:lower:]' | tr -d " ") == "true" ]]; then
+  echo "Starting monitoring script..."
+  python3 -m pip install prometheus_client
+  gosu dropbox python3 /monitoring.py -i ${POLLING_INTERVAL} &
+fi
+
 # Wait a few seconds for the Dropbox daemon to start
 sleep 5
 
