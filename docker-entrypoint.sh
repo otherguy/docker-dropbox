@@ -47,6 +47,11 @@ else
   chown -R ${DROPBOX_UID}:${DROPBOX_GID} /opt/dropbox
 fi
 
+# Set default polling check command.
+if [[ -z "$POLLING_CHECK" ]]; then
+  POLLING_CHECK="true"
+fi
+
 # Change permissions on Dropbox folder
 [[ -d /opt/dropbox/Dropbox ]] && chmod 755 /opt/dropbox/Dropbox
 
@@ -144,5 +149,6 @@ sleep 5
 while kill -0 ${DROPBOX_PID} 2> /dev/null; do
   [ -d "/proc/${DROPBOX_PID}" ] && [ -f "/opt/dropbox/.dropbox/info.json" ] && gosu dropbox dropbox status
   /usr/bin/find /tmp/ -maxdepth 1 -type d -mtime +1 ! -path /tmp/ -exec rm -rf {} \;
+  $POLLING_CHECK || echo "Polling check failed"
   /bin/sleep ${POLLING_INTERVAL}
 done
