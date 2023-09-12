@@ -53,7 +53,7 @@ if [[ -z "$POLLING_CHECK" ]]; then
 fi
 
 # Change permissions on Dropbox folder
-chmod 755 /opt/dropbox/Dropbox
+[[ -d /opt/dropbox/Dropbox ]] && chmod 755 /opt/dropbox/Dropbox
 
 #  Dropbox did not shutdown properly? Remove files.
 [ ! -e "/opt/dropbox/.dropbox/command_socket" ] || rm /opt/dropbox/.dropbox/command_socket
@@ -62,7 +62,7 @@ chmod 755 /opt/dropbox/Dropbox
 [ ! -e "/opt/dropbox/.dropbox/dropbox.pid" ]    || rm /opt/dropbox/.dropbox/dropbox.pid
 
 # Update Dropbox to latest version unless DROPBOX_SKIP_UPDATE is set
-if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
+if [[ -z "$DROPBOX_SKIP_UPDATE" ]] || [[ ! -f /opt/dropbox/bin/VERSION ]]; then
   echo "Checking for latest Dropbox version..."
   sleep 1
 
@@ -76,10 +76,27 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   Latest=$(echo $DL | sed 's/.*x86_64-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
 
   # Get current Version
-  Current=$(cat /opt/dropbox/bin/VERSION)
+  if [[ -f /opt/dropbox/bin/VERSION ]]; then
+    Current=$(cat /opt/dropbox/bin/VERSION)
+  else
+    Current="Not installed"
+  fi
+
+  if [[ ! -d /opt/dropbox/bin ]]; then
+    # Dropbox has the nasty tendency to update itself without asking. In the processs it fills the
+    # file system over time with rather large files written to /opt/dropbox/ and /tmp.
+    #
+    # https://bbs.archlinux.org/viewtopic.php?id=191001
+    mkdir -p /opt/dropbox/bin/ /tmp \
+    && install -dm0 /opt/dropbox/.dropbox-dist \
+    && chmod u-w /opt/dropbox/.dropbox-dist \
+    && chmod o-w /tmp \
+    && chmod g-w /tmp
+  fi
+
   echo "Latest   :" $Latest
   echo "Installed:" $Current
-  if [ ! -z "${Latest}" ] && [ ! -z "${Current}" ] && [ $Current != $Latest ]; then
+  if [ ! -z "${Latest}" ] && [ ! -z "${Current}" ] && [ "$Current" != "$Latest" ]; then
   	echo "Downloading Dropbox $Latest..."
   	tmpdir=`mktemp -d`
   	curl -# -L $DL | tar xzf - -C $tmpdir
@@ -92,6 +109,15 @@ if [[ -z "$DROPBOX_SKIP_UPDATE" ]]; then
   else
     echo "Dropbox is up-to-date"
   fi
+fi
+
+# Get the CLI script
+# https://help.dropbox.com/installs/linux-commands
+if [[ ! -f /opt/dropbbox.py ]]; then
+  wget -O /opt/dropbox.py https://www.dropbox.com/download?dl=packages/dropbox.py
+  echo "#!/bin/bash" > /usr/bin/dropbox
+  echo "python3 /opt/dropbox.py \"\$@\"" >> /usr/bin/dropbox
+  chmod +x /usr/bin/dropbox
 fi
 
 # Empty line
@@ -108,6 +134,13 @@ dpkg-reconfigure --frontend noninteractive tzdata
 echo "Starting dropboxd ($(cat /opt/dropbox/bin/VERSION))..."
 gosu dropbox "$@" & export DROPBOX_PID="$!"
 trap "/bin/kill -SIGQUIT ${DROPBOX_PID}" INT
+
+# Optionally start monitoring script
+if [[ $(echo "${ENABLE_MONITORING:-false}" | tr '[:upper:]' '[:lower:]' | tr -d " ") == "true" ]]; then
+  echo "Starting monitoring script..."
+  python3 -m pip install prometheus_client
+  gosu dropbox python3 /monitoring.py -i ${POLLING_INTERVAL} &
+fi
 
 # Wait a few seconds for the Dropbox daemon to start
 sleep 5
